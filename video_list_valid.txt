@@ -1,0 +1,9 @@
+data/valid/sorted/0 0
+data/valid/sorted/1 1
+data/valid/sorted/2 2
+data/valid/sorted/3 3
+data/valid/sorted/4 4
+data/valid/sorted/5 5
+data/valid/sorted/6 6
+data/valid/sorted/7 7
+data/valid/sorted/8 8

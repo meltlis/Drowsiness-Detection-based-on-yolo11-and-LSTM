@@ -1,0 +1,9 @@
+data/train/sorted/0 0
+data/train/sorted/1 1
+data/train/sorted/2 2
+data/train/sorted/3 3
+data/train/sorted/4 4
+data/train/sorted/5 5
+data/train/sorted/6 6
+data/train/sorted/7 7
+data/train/sorted/8 8
