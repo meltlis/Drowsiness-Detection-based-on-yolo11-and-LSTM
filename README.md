@@ -59,7 +59,6 @@ python predict_fatigue_sequence.py
 利用模型进行推理。predicate.py用yolo提取了每一帧的特征, 然后用lstm或者transformer对整个序列进行了预测。
 predict_fatigue_sequence.py则更进一步，不仅对整个序列进行了预测，还在每一帧用时序模型进行了预测。
 最终预测结果在命令行中输出，并会输出对应的MP4视频。
----
 
 ## License
 
