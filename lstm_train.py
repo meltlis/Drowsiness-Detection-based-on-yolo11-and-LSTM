@@ -25,6 +25,22 @@ class SimpleLSTM(nn.Module):
         out = self.fc(out[:, -1, :])
         return out
 
+class SimpleTransformerClassifier(nn.Module):
+    def __init__(self, input_dim, num_classes, num_layers=2, nhead=2, hidden_dim=64, seq_len=30):
+        super().__init__()
+        self.pos_embedding = nn.Parameter(torch.randn(1, seq_len, input_dim))
+        encoder_layer = nn.TransformerEncoderLayer(d_model=input_dim, nhead=nhead, dim_feedforward=hidden_dim, batch_first=True)
+        self.transformer = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
+        self.fc = nn.Linear(input_dim, num_classes)
+
+    def forward(self, x):
+        # x: [batch, seq_len, input_dim]
+        x = x + self.pos_embedding
+        x = self.transformer(x)
+        x = x.mean(dim=1)  # 池化所有时序特征
+        out = self.fc(x)
+        return out
+
 print("train features shape:", features.shape)
 print("train labels shape:", labels.shape)
 print("valid features shape:", features_val.shape)
@@ -36,10 +52,18 @@ hidden_size = 64
 num_layers = 1
 num_classes = len(torch.unique(labels))
 
-model = SimpleLSTM(input_size, hidden_size, num_layers, num_classes)
+# model = SimpleLSTM(input_size, hidden_size, num_layers, num_classes)
+model = SimpleTransformerClassifier(
+    input_dim=input_size,
+    num_classes=num_classes,
+    num_layers=2,      # 可调
+    nhead=3,           # 可调
+    hidden_dim=64,     # 可调
+    seq_len=features.shape[1]
+)
 criterion = nn.CrossEntropyLoss()
 optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
-epochs = 200
+epochs = 2000
 
 for epoch in range(epochs):
     model.train()
@@ -60,5 +84,5 @@ for epoch in range(epochs):
         val_acc = (val_pred == labels_val).float().mean()
     print(f"Epoch {epoch+1}/{epochs}, Loss: {loss.item():.4f}, Acc: {acc.item():.4f}, Val_Loss: {val_loss.item():.4f}, Val_Acc: {val_acc.item():.4f}")
 
-torch.save(model.state_dict(), "lstm_model.pth")
-print("LSTM模型已保存为 lstm_model.pth")
+torch.save(model.state_dict(), "transformer_model.pth")
+print("Transformer模型已保存为 transformer_model.pth")
